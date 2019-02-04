@@ -1,0 +1,30 @@
+body {background: black;}
+
+a {color: inherit; text-decoration: inherit;}
+a:hover {color: orange;} a:active {color: red;}
+
+@font-face {font-family:teletext2; src:url('teletext2.ttf')}
+@font-face {font-family:teletext4; src:url('teletext4.ttf')}
+
+.subpage {float:left; white-space: pre; color:white;background:black;
+	font-family: teletext2;	font-size:20px; line-height:20px;
+	border: solid black 10px; border-left: 0px;}
+
+.f0{color:black;} .f1{color:red;} .f2{color:#00ff00;} .f3{color:yellow;}
+.f4{color:blue;} .f5{color:magenta;} .f6{color:cyan;} .f7{color:white;}
+
+.b0{background:black;} .b1{background:red;} .b2{background:#00ff00;} .b3{background:yellow;}
+.b4{background:blue;} .b5{background:magenta;} .b6{background:cyan;} .b7{background:white;}
+
+.dh{font-family: teletext4; font-size:40px; line-height:40px;}
+
+.fl{text-decoration: blink}
+
+.selected {background: #333333;}
+
+.dataNoParity {color: black}
+.dataNoParity {font-size: 0px;}
+.dataEP1 {font-size: 0px;}
+.dataDAT {font-size: 0px;}
+
+.button {display: block; clear: left; }
