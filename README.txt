@@ -55,7 +55,12 @@ To use:
 
 		subpagesquash.py g:
 		
-	This generates HTML versions of the recovered service in the g:\html folder.  It also dumps the raw teletext data into 
+	This generates HTML versions of the recovered service in the g:\html folder.  There are two additional switches over the 
+	original version - 'nosquash' doesn't squash any of the pages, useful for a small capture.  'nosquash777' squashes all 
+	except page 777, useful for keeping all pages nicely squashed but leaving 777, which was the Televox page on ITV, 
+	unsquashed so you can see what callers were up to.
+	
+	It also dumps the raw teletext data into 
 	g:\binaries - this folder can be dragged into the main window of the Teletext Recovery Editor here: 
 	https://teletextarchaeologist.org/teletextrecoveryeditor where you can look at the files and correct recovery errors.
 	
