@@ -42,7 +42,7 @@ To use:
 		vbi.py g:
 		
 	This will process the vbi files and turn them into teletext data in the g:\t42 folder.  It shows you headers as it 
-	goes, and will also highlight possible Level 2 packets.
+	goes, and will also highlight possible Level 2 packets and other data packets.
 	
 	Any packets that are > X/24 will be written to g:\datapackets.txt.  These packets are copied as-is in this version 
 	and are not subject to odd-parity checks etc. as they were in the original branch.
