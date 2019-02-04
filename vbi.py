@@ -17,6 +17,7 @@ import os
 import numpy as np
 from scipy.ndimage import gaussian_filter1d as gauss
 from scipy.optimize import fminbound
+from functools import partial
 
 import pylab
 
@@ -31,7 +32,14 @@ import time
 import finders
 import math
 
+from printer import do_print, do_print_plain_text, do_print_hex
+
+import colorama
+colorama.init()
+
 np.seterr(invalid= 'raise')
+
+parentPath = ""
 
 class Vbi(object):
     '''This class represents a line of raw vbi data and all our attempts to
@@ -40,7 +48,7 @@ class Vbi(object):
     possible_bytes = [hammbytes]*2 + [paritybytes]*40
 
     def __init__(self, vbi, bitwidth=5.112, gauss_sd=1.1, gauss_sd_offset=2.0,
-                 offset_low = 75.0, offset_high = 119.0,
+                 offset_low = 75.0, offset_high = 159.0,
                  thresh_low = 1.1, thresh_high = 2.36,
                  allow_unmatched = True, find=finders.all_headers):
 
@@ -109,21 +117,28 @@ class Vbi(object):
             a = guess_scaled*mask_scaled
             b = np.clip(target*mask_scaled, self.black, 256)
 
-            bstd = b.std()
-            if bstd == 0:
-                scale = 1
-            else:
-                scale = a.std()/bstd
-            b -= self.black
-            b *= scale
-            a = np.clip(a, 0, 256*scale)
+            try:
+              scale = a.std()/b.std()
+              b -= self.black
+              b *= scale
+              a = np.clip(a, 0, 256*scale)
+            except FloatingPointError:
+              print "FloatingPointError"
 
             return np.sum(np.square(b-a))
-
-        offset = fminbound(_inner, self.offset_low, self.offset_high)
+        
+        try:
+            offset = fminbound(_inner, self.offset_low, self.offset_high)
+        except FloatingPointError:
+            print "FloatingPointError"
 
         # call it also to set self.offset and self.scale
-        return (_inner(offset) < 10)
+        try:
+            rValue = (_inner(offset) < 10)
+        except UnboundLocalError:
+            rValue = False
+            
+        return rValue
 
     def make_guess_mask(self):
         a = []
@@ -222,7 +237,7 @@ class Vbi(object):
                 break
             self._oldbytes[:] = self.g.bytes
 
-    def deconvolve(self):
+    def deconvolve(self, frame, parentPath):
         target = gauss(self.vbi, self.gauss_sd)
         self.target = normalise(target)
 
@@ -237,12 +252,16 @@ class Vbi(object):
 
         F = finders.test(self.finders, packet)
         if F:
-                sys.stderr.write("matched by finder "+F.name+"\n");
+                sys.stderr.write("Matched by finder "+F.name + ': ');
                 sys.stderr.flush()               
                 self.make_possible_bytes(F.possible_bytes)
                 self._deconvolve()
                 F.find(self.g.bytes)
                 packet = F.fixup()
+                packetText = "".join([chr(x & 0x7f) for x in self.g.bytes])
+                #sys.stderr.write('\t' + packetText + '\n')
+                print do_print(packetText)
+                sys.stderr.flush() 
                 return packet
 
         # if the packet did not match any of the finders then it isn't 
@@ -255,45 +274,129 @@ class Vbi(object):
         # with r=0. which should be impossible.
         ((m,r),e) = mrag(self.g.bytes[:2])
         if r == 0:
-            sys.stderr.write("packet falsely claimed to be packet %d\n" % r);
+            sys.stderr.write("Packet falsely claimed to be packet %d: " % r);
             sys.stderr.flush()
             if not self.allow_unmatched:
                 self._nzdeconvolve()
-            packet = "".join([chr(x) for x in self.g.bytes])
+            packet = "".join([chr(x & 0x7f) for x in self.g.bytes])
+            #sys.stderr.write(packet + '\n')
+            print do_print(packet)
+            sys.stderr.flush()
+			# Write packet to file in case we want to include it as a finder
+            of = file(os.path.join(parentPath, "UnfoundPackets.txt"), 'a')
+            #of.write("".join([(x & 0x7f) for x in self.g.bytes]))
+            of.write("File: %s Packet: %s Hex: %s\n" % (frame, do_print_plain_text(packet), do_print_hex(packet)))
+            of.close()
         # if it's a link packet, it is completely hammed
         elif r == 27:
             self.make_possible_bytes([hammbytes]*42)
             self._deconvolve()
             packet = "".join([chr(x) for x in self.g.bytes])
-
+        elif r == 26 or r == 28 or r == 29:
+            self.make_possible_bytes([hammbytes]*2 + [set(range(256))]*40)
+            self._deconvolve()
+            packet = "".join([chr(x) for x in self.g.bytes])
+            print "\nL2 Data Packet: %s" % (do_print_plain_text(packet))
+            of = file(os.path.join(parentPath, "DataPackets.txt"), 'a')
+            #of.write("".join([(x & 0x7f) for x in self.g.bytes]))
+            of.write("File: %s Packet: %s Hex: %s\n" % (frame, do_print_plain_text(packet), do_print_hex(packet)))
+            of.close()            
+        elif r > 25:
+            print "\nData Packet: %s" % (do_print_plain_text(packet))
+            of = file(os.path.join(parentPath, "DataPackets.txt"), 'a')
+            #of.write("".join([(x & 0x7f) for x in self.g.bytes]))
+            of.write("File: %s Packet: %s Hex: %s\n" % (frame, do_print_plain_text(packet), do_print_hex(packet)))
+            of.close()
         return packet
             
         
 
 
-def process_file((inname, outname)):
-  print inname, outname
-  try:
-    data = np.fromstring(file(inname).read(), dtype=np.uint8)
-    outfile = file(outname, 'wb')
-    for line in range(32):
-        offset = line*2048
-        vbiraw = data[offset:offset+2048]
-        v = Vbi(vbiraw)
-        tmp = v.find_offset_and_scale()
-        if tmp:
-            outfile.write(v.deconvolve())
-        else:
-            outfile.write("\xff"*42)
-    outfile.close()
-  except IOError:
-    pass
+def process_file((inname, outname, parentPath)):
+    print inname
+    try:
+        f = open(inname, 'rb')
+        data = np.fromstring(f.read(), dtype=np.uint8)
+        outfile = file(outname, 'wb')
+        for line in range(32):
+            offset = line*2048
+            vbiraw = data[offset:offset+2048]
+            v = Vbi(vbiraw)
+            tmp = v.find_offset_and_scale()
+            if tmp:
+                outfile.write(v.deconvolve(outname, parentPath))
+            else:
+                outfile.write("\xff"*42)
+        outfile.close()
+        f.close()
+        if 0:
+            os.remove(inname)
+        
+    except IOError:
+        print "I/O Error."
+        pass
+        
+def process_file_mono((inname, outname, parentPath)):
+    
+    #try:
+    filein = open(inname, 'rb')
+    outfile = file(outname, 'ab')
+    chunkf = 0.0
+    fileSizeIn = os.path.getsize(inname)
+    
+    numChunks = fileSizeIn / 65536
+    
+    print "filein: %s\nfileOut: %s\n" % (inname, outname)
+    
+    # See if we've already started processing this and can continue where we left off
+    #try:
+    fileSizeOut = os.path.getsize(outname)
+    print "file size (VBI): %d, numChunks: %d, file size (T42): %d" % (fileSizeIn, numChunks, fileSizeOut)
+    
+    numT42sInOutFile = fileSizeOut / 42.0
+    print "Number of t42s in out file: %f\n" % numT42sInOutFile
+    
+    extraBytesInOutFile = (numT42sInOutFile - np.fix(numT42sInOutFile)) * 42
+    print "Number of extra bytes on the last t42: %d" % (extraBytesInOutFile)
+    if extraBytesInOutFile > 0:
+        print "Padding t42 file with %d bytes...\n" % (43 - extraBytesInOutFile)
+        outfile.write("\xff"*(43 - extraBytesInOutFile))
+        fileSizeOut = os.path.getsize(outname)
+        print "t42 file size now: %d" % fileSizeOut
+    
+    chunkf = fileSizeOut / 42.0 * 2048.0 / 65536.0
+    
+    chunk = int(chunkf)
+    print "Chunk: %f" % chunk
+    filein.seek(chunk * 65536)
+    #except IOError:
+        #print "Creating new t42 file...."
+        #chunk = 0
+    
 
+    #for chunk in range(numChunks):
+    for chunk in range(chunk, numChunks):
+        print 'Frame: %d of %d\n' % (chunk, numChunks)
+        data = np.fromstring(filein.read(65536), dtype=np.uint8)
+        for line in range(32):
+            offset = line*2048
+            vbiraw = data[offset:offset+2048]
+            v = Vbi(vbiraw)
+            tmp = v.find_offset_and_scale()
+            if tmp:
+                outfile.write(v.deconvolve(outname, parentPath))
+            else:
+                outfile.write("\xff"*42)
+                
+    #except IOError:
+        #print "I/O Error."
+        #pass
+    outfile.close()
 
 def test_file(outfile):
     return os.path.isfile(outfile) and (os.path.getsize(outfile) == (42 * 32))
 
-def list_files(inputpath, outputpath, first, count, skip):
+def list_files(inputpath, outputpath, parentPath, first, count, skip):
     for frame in range(first, first+count, skip):
         frame = "%08d" % frame
         if test_file(outputpath + '/' + frame + '.t42'):
@@ -301,7 +404,12 @@ def list_files(inputpath, outputpath, first, count, skip):
             pass
         else:
             yield (inputpath + '/' + frame + '.vbi', 
-                  outputpath + '/' + frame + '.t42')
+                  outputpath + '/' + frame + '.t42', parentPath)
+                  
+def list_files_mono(inputpath):
+    yield (inputpath, 
+          inputpath[:-4] + ".t42",
+          parentPath)                  
 
 
 if __name__ == '__main__':
@@ -333,23 +441,38 @@ if __name__ == '__main__':
         skip = int(sys.argv[4], 10)
     except:
         first = 0
-        count = 10000000
+        count = 100000
         skip = 1
 
+    
+    #sys.stderr.write("path[-3:] = %s\n" % path[-3:])
+    parentPath = os.path.abspath(os.path.join(path, os.pardir))
+    if path[-3:] != "vbi":
+        parentPath = path
+    if not os.path.isdir(parentPath+'/t42/'):
+        os.makedirs(parentPath+'/t42/')
+        
+    #print "\nparentPath= %s\n" % parentPath
 
-    if not os.path.isdir(path+'/t42/'):
-        os.makedirs(path+'/t42/')
 
-
+    
     if 1:
-        p = Pool(multiprocessing.cpu_count())
-        it = p.imap(process_file, list_files(path+'/vbi/', path+'/t42/', first, count, skip), chunksize=1)
+        print "CPU count: %d\n" % multiprocessing.cpu_count()
+        p = Pool(multiprocessing.cpu_count() - 1)
+        if path[-4:] != '.vbi':
+            it = p.imap(process_file, list_files(path+'/vbi/', path+'/t42', parentPath, first, count, skip), chunksize=1)
+        else:
+            it = p.imap(process_file_mono, list_files_mono(path), chunksize=1)
         for i in it:
             pass
 
     else: # single thread mode for debugging
         def doit():
-            map(process_file, list_files(path+'/vbi/', path+'/t42/', first, count, skip))
+            if path[-4:] != '.vbi':
+                map(process_file, list_files(path+'/vbi/', path+'/t42', parentPath, first, count, skip))
+            else:
+                #map(process_file_mono, path)
+                process_file_mono((path, list_files_mono(path), parentPath))
         cProfile.run('doit()', 'myprofile')
         p = pstats.Stats('myprofile')
         p.sort_stats('cumulative').print_stats(50)

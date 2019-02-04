@@ -158,9 +158,14 @@ class Printer(object):
         head = self.setstyle(html=False, fg=7, bg=0)
         body = "".join([self.transform(x, html=False) for x in self.tt])
         return head+body.encode('utf8')+'\033[0m'
+        
+    def string_plain(self):
+        text = ''.join([chr(i) if i < 127 and i > 31 else ' ' for i in self.tt])
+        return text
 
-
-
+    def string_hex(self):
+        text = ''.join([" {:02x}".format(i) for i in self.tt])
+        return text
 
 
 
@@ -204,7 +209,82 @@ def do_print(tt):
 
     return ret
 
+def do_print_plain_text(tt):
+    if type(tt) == type(''):
+        tt = np.fromstring(tt, dtype=np.uint8)
+    ret = ""
+    ((m, r),e) = mrag(tt[:2])
+    ret += "%1d %2d" % (m, r)
+    if r == 0:
+        (p,e) = page(tt[2:4])
+        ((s,c),e) = subcode_bcd(tt[4:10])
+        ret += "   P%1d%02x " % (m,p)
+        ret += Printer(tt[10:]).string_plain()
+        ret += " %04x %x" % (s,c)
+    elif r == 30: # broadcast service data
+        # designation code
+        (d,e) = unhamm84(tt[2])
+        # initial page
+        (p,e) = page(tt[3:5])
+        ((s,m),e) = subcode_bcd(np.fromstring(tt[5:9], dtype=np.uint8))
+        ret += " %1d I%1d%02x:%04x " % (d, m, p, s)
+        if d&2:
+            ret += "(PDC) "
+        else:
+            ret += "(NET) "
+        ret += Printer(tt[22:]).string_plain()
+    elif r == 27: # broadcast service data
+        # designation code
+        (d,e) = unhamm84(tt[2])
+        ret += " %1d " % (d)
+        for n in range(6):
+            nn = n*6
+            (p,e) = page(tt[nn+3:nn+5])
+            ((s,m),e) = subcode_bcd(tt[nn+5:nn+9])
+            ret += " %1d%02x:%04x " % (m,p,s)
+    else:
+        ret += Printer(tt[2:]).string_plain()
 
+    return ret
+    
+    
+def do_print_hex(tt):
+    if type(tt) == type(''):
+        tt = np.fromstring(tt, dtype=np.uint8)
+    ret = ""
+    ((m, r),e) = mrag(tt[:2])
+    ret += "%1d %2d" % (m, r)
+    if r == 0:
+        (p,e) = page(tt[2:4])
+        ((s,c),e) = subcode_bcd(tt[4:10])
+        ret += "   P%1d%02x " % (m,p)
+        ret += Printer(tt[10:]).string_hex()
+        ret += " %04x %x" % (s,c)
+    elif r == 30: # broadcast service data
+        # designation code
+        (d,e) = unhamm84(tt[2])
+        # initial page
+        (p,e) = page(tt[3:5])
+        ((s,m),e) = subcode_bcd(np.fromstring(tt[5:9], dtype=np.uint8))
+        ret += " %1d I%1d%02x:%04x " % (d, m, p, s)
+        if d&2:
+            ret += "(PDC) "
+        else:
+            ret += "(NET) "
+        ret += Printer(tt[22:]).string_hex()
+    elif r == 27: # broadcast service data
+        # designation code
+        (d,e) = unhamm84(tt[2])
+        ret += " %1d " % (d)
+        for n in range(6):
+            nn = n*6
+            (p,e) = page(tt[nn+3:nn+5])
+            ((s,m),e) = subcode_bcd(tt[nn+5:nn+9])
+            ret += " %1d%02x:%04x " % (m,p,s)
+    else:
+        ret += Printer(tt[2:]).string_hex()
+
+    return ret
 
 if __name__=='__main__':
     import sys

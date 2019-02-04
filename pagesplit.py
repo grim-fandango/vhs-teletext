@@ -10,6 +10,40 @@ from printer import do_print
 import config
 import finders
 
+import colorama
+colorama.init()
+
+import shutil
+
+def do_raw(filename):
+    
+    try:
+        filereader = open(filename, 'rb')
+        f = filereader.read()
+        filereader.close()
+
+    except:
+        return (0, 0, '')
+    
+    f1count = 0
+    f2count = 0
+    data = ''
+    for l in range(len(f) / 42):
+        print 'Line: %d\r' % l,
+        sys.stdout.flush()
+        offset = 42*l
+        line = f[offset:offset+42]
+        
+        if line != "\xff"*42:
+            data = data + line
+            
+            if l > 15:
+                f2count += 1
+            else:
+                f1count += 1
+
+    return (f1count, f2count, data)
+
 class PageWriter(object):
     def __init__(self, outdir):
         self.outdir = outdir
@@ -26,6 +60,7 @@ class PageWriter(object):
             if not os.path.isdir(path):
                 os.makedirs(path)
             f = os.path.join(path, p)
+            #print "Page Path: %s" % f
             of = file(f, 'ab')
             for p in ps:
                 of.write(p.tt)
@@ -91,6 +126,7 @@ class MagHandler(object):
         self.packets = []
 
     def bad_page(self):
+        #print "\nBad Page %d" % (self.m)
         self.pagewriter.bad += 1
         self.packets = []
 
@@ -130,9 +166,10 @@ class MagHandler(object):
                 self.packets[n].good = False
                 badcount += 1
         self.packets[-1].good = self.packets[-1].ro > highgood
-
+        
         self.packets = [p for p in self.packets if p.good]
-        if len(self.packets) > (MagHandler.pol*0.5):
+        #A value of 0.25 below will pick up pages with only four packets
+        if len(self.packets) > (MagHandler.pol*0.25):
             self.fill_missing()
             self.good_page()
         else:
@@ -152,18 +189,81 @@ class MagHandler(object):
 
 if __name__=='__main__':
 
-    w = PageWriter(sys.argv[1])
-
-    mags = [MagHandler(n, w) if n in config.magazines else NullHandler() for n in range(8)]
+    # Usage: pagesplit.py FolderOrFile [t42 file number to start from]
 
     packet_list = []
+    
+    if os.path.isdir(sys.argv[1]):
+        t42path = sys.argv[1] + '\\t42'
+        parentPath = sys.argv[1]
+    else:
+        t42path = os.path.abspath(os.path.join(sys.argv[1], os.pardir))
+        parentPath = t42path
+    
+    w = PageWriter(parentPath +  '\\pages')
+    
+    mags = [MagHandler(n, w) if n in config.magazines else NullHandler() for n in range(8)]   
+    
+    of = file(os.path.join(parentPath, "PacketOrder.txt"), 'w')
+    try:
+        shutil.rmtree(parentPath + '/pages/')
+    except:
+        print "Unable to delete 'pages' folder\n"
 
-    while(True):
-        tt = sys.stdin.read(42)
-        if len(tt) < 42:
-            exit(0)
+        
+    sys.stderr.write('parentpath = %s\n' % parentPath)
+        
+    if len(sys.argv) > 2:
+        startT42 = int(sys.argv[2])
+    else:
+        startT42 = 0
+    
+    if os.path.isdir(sys.argv[1]):
+        for i in range(startT42,100000):
+        #for i in range(23000,23010):
+            (a,b,f) = do_raw(t42path + '\\' + ('%08d.t42' % i))
+            sys.stderr.write(t42path + '\\' + ('%08d.t42\t%d\t%d\n' % (i, a, b)))
+            if b != -1:
+        
+                #try:
+                for n in range(0,len(f)/42):
+                    tt = f[n*42:(n*42)+42]
+                    
+                    if len(tt) == 42:
+                        p = PacketHolder(tt)
+                        if p.r in MagHandler.packet_order:
+                            mags[p.m].add_packet(p)
+                            
+                            of.write("File: %s Magazine: %s Packet: %s\n" % (('%08d.t42' % i), p.m, p.r))
+                            
+            else:
+                break
+    else:
+        (a,b,f) = do_raw(sys.argv[1])
+        sys.stderr.write('%s\t%d\t%d\n' % (sys.argv[1], a, b))
+        if b != -1:
+            sys.stderr.write('b != -1')
+            #try:
+            for n in range(0,len(f)/42):
+                tt = f[n*42:(n*42)+42]
+                
+                if len(tt) == 42:
+                    p = PacketHolder(tt)
+                    if p.r in MagHandler.packet_order:
+                        mags[p.m].add_packet(p)
+                        
+                        of.write("File: %s Magazine: %s Packet: %s\n" % (sys.argv[1], p.m, p.r))
+        
+    of.close()
 
-        p = PacketHolder(tt)
-        if p.r in MagHandler.packet_order:
-            mags[p.m].add_packet(p)
+
+
+    #while(True):
+    #    tt = sys.stdin.read(42)
+    #    if len(tt) < 42:
+    #        exit(0)
+    
+    #    p = PacketHolder(tt)
+    #    if p.r in MagHandler.packet_order:
+    #        mags[p.m].add_packet(p)
 

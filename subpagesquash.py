@@ -36,6 +36,7 @@ class Squasher(object):
         self.m = self.pages[0].m
         self.p = self.pages[0].p
 
+
         for i in range(3):
          unique_pages = self.hamming()
          squashed_pages = []
@@ -49,8 +50,10 @@ class Squasher(object):
         for pl in unique_pages:
           if len(pl) > 1 or len(unique_pages) == 1:
             squashed_pages += [Page(self.squash(pl))]
-
-
+            
+        if nosquash == 'nosquash' or (nosquash == 'nosquash777' and self.m == 7 and self.p == 0x77): 
+            squashed_pages = self.pages
+           
         # sort it
         sorttmp = [(p.s, p) for p in squashed_pages]
         sorttmp.sort()
@@ -117,8 +120,27 @@ class Squasher(object):
 <body><pre>""" % (self.m, self.p)
         body = "".join([p.to_html("#%d" % n) for n,p in enumerate(self.squashed_pages)])
         footer = "</body>"
+        
+        htmlOut.write("<a href='%d%02x.html'>%d%02x</a><br />\n"  % (self.m, self.p, self.m, self.p))
 
         return header+body+footer
+
+    def to_binary(self):
+        return "".join([p.to_str() for n,p in enumerate(self.squashed_pages)])
+        
+    def to_base64url(self):
+        # Convert page to contiguous binary string
+        #binary = "".join([p.to_binary() for p in enumerate(self.squashed_pages)])
+
+        url = "".join([p.to_base64url() for n,p in enumerate(self.squashed_pages)])
+        
+        #print "\n%s\n" % (url)
+            
+        return url
+        
+    def to_c64teletext(self):
+        out = "".join([p.to_c64teletext() for p in self.squashed_pages])
+        return out
 
 def main_work_subdirs(gl):
     for root, dirs, files in os.walk(gl['pwd']):
@@ -128,13 +150,33 @@ def main_work_subdirs(gl):
                 print(d2i)
 
 if __name__=='__main__':
-    indir = sys.argv[1]
-    outdir = sys.argv[2]
+    indir = sys.argv[1] + '/pages'
+    outdir = sys.argv[1] + '/html'
+    try:
+      nosquash = sys.argv[2]
+    except IndexError:
+      nosquash = ''    
+    try:
+      bindir = sys.argv[1] + '/binaries'
+    except IndexError:
+      bindir=''
+
 
     outpath = os.path.join('.', outdir)
+    binpath = os.path.join('.', bindir)
+
     if not os.path.isdir(outpath):
         os.makedirs(outpath)
+    if not os.path.isdir(binpath):
+        os.makedirs(binpath)
 
+    base64Out = file(os.path.join(outpath, "index.html"), 'w')
+    base64Out.write("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html;charset=utf-8' /><script type='text/javascript' src='https://teletextarchaeologist.org/editor/teletext-editor.js'></script><script type='text/javascript'>        function init_frames() {            // Create a new editor:\n          var editor = new Editor();            // Make it the active editor so it receives keypresses:\n          active_editor = editor;            // Initialise the editor, placing it in the canvas with HTML\n            // ID 'frame'.\n          editor.init_frame('frame');            // Set the user page entry offset\n            editor._viewer_setuserpageoffset(3);            // Set the time display offset and format\n            editor._viewer_settimeformat(32, 'h:m/s');            // Load all pages from this html page\n            editor._viewer_loadpages();        }        </script>        <title>teletext-editor</title>        <style type='text/css'>a:link{color: white} a:visited{color: white}        body {             background-color: #111;        }        canvas {            /* The canvas should have no padding */            background-color: #000;            z-index: 1;            border: 10px solid black;            border-radius: 5px;                        /* Centre the canvas on the page */	            position:relative;          margin: auto;            position: absolute;          left:0;          right: 0;          top: 0;          bottom: 0;        }        </style>        </head>        <body onload='init_frames();'>        <canvas id='frame'></canvas>        <div style='display: none;'>")
+    
+    htmlOut = file(os.path.join(outpath, "index.htm"), 'w')
+    htmlOut.write("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html;charset=utf-8'></head><body><div style='font-family: Helvetica, Arial, sans-serif; text-align: left;'><h1>Service, Date</h1>")
+
+    
     for root, dirs, files in os.walk(indir):
         dirs.sort()
         files.sort()
@@ -146,4 +188,18 @@ if __name__=='__main__':
             outfile = "%d%02x.html" % (m, s.p)
             of = file(os.path.join(outpath, outfile), 'wb')
             of.write(s.to_html())
-
+            if bindir != '':
+                binoutfile = "%d%02x.bin" % (m, s.p)
+                binfile = file(os.path.join(binpath, binoutfile), 'wb')
+                binfile.write(s.to_binary())
+                
+                #c64file = file(os.path.join(binpath, "%d%02x-01.prg" % (m, s.p)), 'wb')
+                #c64file.write(s.to_c64teletext())
+            #print "\n%s\n" % (s.to_base64url())   
+            base64Out.write("\n%s\n<br />" % (s.to_base64url()))
+    
+    htmlOut.write("</div></body></html>")
+    htmlOut.close()
+    
+    base64Out.write("</div><div style='color: white; font-family: Helvetica, Arial, sans-serif; text-align: center; font-size: 80%;'><h1>Teletext Viewer - [Service] [Date]</h1><p>Teletext data is recovered from videotape by <a href='https://twitter.com/grim_fandango'>Jason Robertson (@grim_fandango)</a>, using Alistair Buxton's <a href='https://github.com/ali1234/vhs-teletext'>VHS-Teletext</a> with additional functionality by Jason Robertson. <br/><br/>Viewer is Simon Rawles' <a href='https://github.com/rawles/teletext-editor'>Teletext Editor</a> tailored for viewing by <a href='https://twitter.com/adamdawes575'>Adam Dawes (@adamdawes575)</a><p>Usage: type the page number you want using the number keys.  Use cursor keys left/right to move through the sub-pages; use cursor keys up/down to move to the next available page.</p></div></body></html>")
+    base64Out.close()

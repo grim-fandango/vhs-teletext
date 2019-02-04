@@ -35,7 +35,7 @@ class Page(object):
         self.threshold *= ((self.threshold > 5) & (self.no_double_on_prev))
 
         # some proportion of non-blanks must match in the rest of the lines
-        self.threshold *= 0.5
+        self.threshold /= 2
 
         # sum required threshold for each line to get total threshold
         self.threshold_sum = self.threshold.sum() * 1.5
@@ -80,6 +80,40 @@ class Page(object):
 
     def to_str(self):
         return "".join([chr(x) for x in self.array.reshape((42*26))])
+    
+    def to_binary(self):
+        return "".join(['{0:08b}'.format(x) for x in self.array.reshape((42*26))])
 
+    def to_base64url(self):
+        #print self.array.shape
+        # Chop the MRAG off from the data
+        noMrag = self.array[0:26,2:]
+        noMrag[0, :8] = 32
+        visible = np.delete(noMrag, 1, 0)
+        #print visible.shape
+        #print "".join('{0:08b}'.format(63)[1:])
+        #binary += ('{0:08b}'.format(x)[1:] for x in self.array[2:26][2:])
+        binary = "".join('{0:08b}'.format(x)[1:] for x in visible.reshape(1000))
+        binary += "00"
+        
+        #print "binary Length:%d\n" % len(binary)
+        encoded = "<a href='https://teletextarchaeologist.org/editor/#0:"
+        # Loop 5-bit segments
+        for n in range(len(binary) / 6):
+            # Get substring
+            segment = binary[n*6:(n*6)+6]
+            index = int(segment, 2)
+            encoded += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"[index]
+        encoded += "' target='_blank'>" + "%d%02x" % (self.m, self.p) + "</a>\n"
+        return encoded
 
-
+    def to_c64teletext(self):
+        # Chop the MRAG off from the data
+        noMrag = self.array[0:26,2:]
+        visible = np.delete(noMrag, 1, 0)
+        noheader = np.delete(visible, 0, 0)
+        
+        c64Out = "".join([chr(x) for x in noheader.reshape((40*24))])
+        c64Out = c64Out.join('0x00')
+        
+        return c64Out

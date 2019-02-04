@@ -120,8 +120,10 @@ _le = np.arange(0, 8, 1)
 _be = np.arange(7, -1, -1)
 
 paritybytes = set(filter(lambda x: 1&np.sum(1&(x>>_le)), range(256)))
+#paritybytes = set(range(256))
 
 hammbytes = set([2,21,47,56,73,94,100,115,140,155,161,182,199,208,234,253])
+# unhammed:     #1,0, 7, 6, 2, 3, 4,  5,  10, 11, 12, 13, 9,  8,  15, 14
 
 upperbytes = set([makeparity(ord(x)) for x in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'])
 lowerbytes = set([makeparity(ord(x)) for x in 'abcdefghijklmnopqrstuvwxyz'])

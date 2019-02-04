@@ -142,13 +142,9 @@ ARD = Finder("          653 ARDtext dd 14.10.14 19:37:49",
              "HHHHHHHHHHmhhpeeeeeeepppp39e19e99p29e59e59",
              name="ARDtext Packet 0", row=0)
 
-BBC = Finder("          CEEFAX 1 217 Wed 25 Dec\x0318:29/53",
-             "HHHHHHHHHHeeeeeee2emhheDAYe39eMONe"+"29e59e59", 
-             name="BBC Packet 0", row=0)
-
-BBCOld = Finder("          CEEFAX 217  Wed 25 Dec \x0318:29/53",
-                "HHHHHHHHHHeeeeeeemhheeDAYe39eMONee"+"29e59e59", 
-                name="BBC Old Packet 0", row=0)
+BBC = Finder("          CEEFAX 217  Wed 25 Dec \x0318:29/53",
+                "HHHHHHHHHHeeeeeeemhheeDAYep9eMONee"+"29e59e59", 
+                name="BBC Packet 0", row=0)
 
 Central = Finder("          Central  217 Wed 25 Dec 18:29:53",
                  "HHHHHHHHHHeeeeeeeeemhheDAYe39eMONp29e59e59", 
@@ -159,50 +155,290 @@ FiveText = Finder("          \x06   5 text   \x07255 02 May\x031835:21",
                   name="5 Text Packet 0", row=0)
 
 TeletextLtd = Finder("          \x04\x1d\x03Teletext\x07 \x1c100 May05\x0318:29:53",
-                     "HHHHHHHHHHe"+"e"+"e"+"eeeeeeeee"+"ee"+"mhheMON39e"+"29e59e59", 
+                     "HHHHHHHHHHe"+"e"+"e"+"eeeeeeeee"+"ee"+"mhheMONp9e"+"29e59e59", 
                      name="Teletext Ltd Packet 0", row=0)
 
 FourTel = Finder("          4-Tel 307 Sun 26 May\x03C4\x0718:29:53",
-                 "HHHHHHHHHHeeeeeemhheDAYe39eMONe"+"eee"+"29e59e59", 
+                 "HHHHHHHHHHeeeeeemhheDAYep9eMONe"+"eee"+"29e59e59", 
                   name="4Tel Packet 0", row=0)
 
-Kalejdoskop = Finder("          100 KALEJDOSKOP         18:29:53",
-                     "HHHHHHHHHHmhhpeeeeeeeeeeeppppppppp29e59e59", 
-                     name="KALEJDOSKOP", row=0)
+Oracle =  Finder("          ORACLE 297 Sun26 May\x03ITV 1829:53",
+                 "HHHHHHHHHHeeeeeeemhheDAYp9eMONe"+"eeee2959e59", 
+                   name="ORACLE Packet 0", row=0)
 
-Medicina    = Finder("          100 MEDICINA            18:29:53",
-                     "HHHHHHHHHHmhhpeeeeeeeepppppppppppp29e59e59", 
-                     name="MEDICINA", row=0)
+OracleCEN = Finder("          ORACLE 297 Sun26 May\x03CEN 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONe"+"eeee2959e59", 
+                  name="ORACLE Central Packet 0", row=0)
 
-Komentarii  = Finder("          100 KOMMENTARII         18:29:53",
-                     "HHHHHHHHHHmhhpeeeeeeeeeeeppppppppp29e59e59", 
-                     name="KOMENTARII", row=0)
+OracleYTV = Finder("          ORACLE 297 Sun26 May\x03YTV 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONe"+"eeee2959e59", 
+                  name="ORACLE Yorkshire Packet 0", row=0)
 
-Finans      = Finder("          100   FINANS            18:29:53",
-                     "HHHHHHHHHHmhhpppeeeeeepppppppppppp29e59e59", 
-                     name="FINANS", row=0)
+OracleTest = Finder("                 644                      ",
+                    "HHHHHHHHHHeeeeeeemhheeeeeeeeeeeeeeeeeeeeee",
+                  name="ORACLE Test Page Packet 0", row=0)
+		              
+Televox = Finder("          TELEVOX 000101  **       2022:02",
+                 "HHHHHHHHHHeeeeeeee999999ppppppppppp2959e59", 
+                  name="ORACLE Televox Packet 0", row=0)
 
-Ekonomika   = Finder("          100 EKONOMIKA           18:29:53",
-                     "HHHHHHHHHHmhhpeeeeeeeeeppppppppppp29e59e59", 
-                     name="EKONOMIKA", row=0)
+OracleC4 = Finder("          ORACLE 297 Sun26 May\x03C4  1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONe"+"eeee2959e59", 
+                  name="ORACLE C4 Packet 0", row=0)
 
-Teleinf     = Finder("          100 TELEINF             18:29:53",
-                     "HHHHHHHHHHmhhpeeeeeeeppppppppppppp29e59e59", 
-                     name="TELEINF", row=0)
+Oracle1976 = Finder("          ORACLE 297 Sun26May ITV 18.29/53",
+                    "HHHHHHHHHHeeeeeeemhheDAY39MONeeeee29e59e59", 
+                  name="ORACLE 1976 Packet 0", row=0)
 
-Automagazin = Finder("          100 AUTOMAGAZIN         18:29:53",
-                     "HHHHHHHHHHmhhpeeeeeeeeeeeppppppppp29e59e59", 
-                     name="EKONOMIKA", row=0)
+OraclePre1976 = Finder("          ORACLE p176 Wed 18 Feb  20.44/13",
+					   "HHHHHHHHHHeeeeeeepmhheDAYe39eMONee29e59e59", 
+					name="ORACLE Pre-1976 Packet 0", row=0)
+					
+TeletextFailure = Finder("          TELETEXT SYSTEM FAILURE **:**:**",
+					     "HHHHHHHHHHeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", 
+					name="Teletext System Failure Packet 0", row=0)		
+
+DBI = Finder("              DBI/CH3 - DBILN1     2243:32",
+		     "HHHHHHHHHHeeeeeeeeeeeeeeeeeeeeeeeee2959e59", 
+			name="DBI/CH3 Packet 0", row=0)
+                        
+DBIStatus = Finder("              DBI STATUS PAGE      2243:43",
+			       "HHHHHHHHHHppppeeeeeeeeeeeeeeepppppp2959e59", 
+			       name="DBI Status Packet 0", row=0)			
+					
+TeletextSubtitles = Finder("               ITV SUBTITLES              ",
+			               "HHHHHHHHHHeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", 
+			       name="Teletext Subtitles Packet 0", row=0)				
+					
+BBCnew = Finder("          CEEFAX 1 217 Wed 25 Dec\x0318:29/53",
+                "HHHHHHHHHHeeeeeee2emhheDAYe39eMONe"+"29e59e59", 
+             name="BBC Packet 0", row=0)
 
 Generic     = Finder("          100 MEDICINA            18:29:53",
-                     "HHHHHHHHHHmhhppppppppppppppppppppp29e59e59", 
+                     "HHHHHHHHHHpppppppppppppppppppppppppppppppp", 
                      name="Generic", row=0)
 
+SkyTextEarly     = Finder("          \x06Skytext \x07100 Mon 12 Jan\x032320:53",
+                     "HHHHHHHHHHeeeeeeeeeemhheDAYe39eMONe2959e59", 
+                     name="SkyText", row=0)
+                     
+OracleLON = Finder("          ORACLE 297 Sun26 May\x03LON 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONe"+"eeee2959e59", 
+                  name="ORACLE London Packet 0", row=0)
+                  
+SkyText     = Finder("          \x06SKYTEXT \x07100 Mon 12 Jan\x032320:53",
+                     "HHHHHHHHHHeeeeeeeeeemhheDAYep9eMONe2959e59", 
+                     name="SkyText", row=0)
+                     
+TeletextOn3 = Finder("          Teletext on 3 525 May16\x0319:03:33",
+                     "HHHHHHHHHHeeeeeeeeeeeeeemhheMON39"+"e29:59:59", 
+                     name="TeletextOn3", row=0)
+                     
+TeletextOn4 = Finder("          Teletext on 4 525 May16\x0319:03:33",
+                     "HHHHHHHHHHeeeeeeeeeeeeeemhheMON39"+"e29:59:59", 
+                     name="TeletextOn4", row=0)
+                     
+OracleGRA = Finder("          ORACLE 297 Sun26 May\x03GRA 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONe"+"eeee2959e59", 
+                  name="ORACLE Granada Packet 0", row=0)
 
+OracleTTT = Finder("          ORACLE 297 Sun26 May\x03TTT 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONe"+"eeee2959e59", 
+                  name="ORACLE Tyne Tees Packet 0", row=0) 
 
-all_headers = [BBC, BBCOld, Central, TeletextLtd, FourTel, FiveText]
-#all_headers = [Kalejdoskop, Medicina, Komentarii, Finans, Ekonomika, Teleinf, Automagazin]
-#all_headers = [Generic]
+OracleHTV = Finder("          ORACLE 297 Sun26 May\x03HTV 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONe"+"eeee2959e59", 
+                  name="ORACLE HTV Packet 0", row=0)    
+
+OracleITN = Finder("          ORACLE 297 Sun26 May ITN 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONpeeep2959e59", 
+                  name="ORACLE ITN Packet 0", row=0)        
+
+OracleGreenClock = Finder("          ORACLE 297 Sun26 May ITV 1829:53",
+                          "HHHHHHHHHHeeeeeeemhheDAYp9eMONpeeep2959e59", 
+                  name="ORACLE ITV Green Clock Packet 0", row=0)  
+
+OracleWhite = Finder("          ORACLE 297 Sun26 May\x07ITV 1829:53",
+                     "HHHHHHHHHHeeeeeeemhheDAYp9eMON"+"peeep2959e59", 
+                  name="ORACLE ITV White Channel ID and Clock", row=0) 
+                  
+OracleWhiteIDGreenClock = Finder("          ORACLE 297 Sun26 May\x07ITV\x021829:53",
+                                 "HHHHHHHHHHeeeeeeemhheDAYp9eMON"+"peee"+"e2959e59", 
+                  name="ORACLE ITV White Channel ID and Green Clock", row=0) 
+
+Anglia =  Finder("          Anglia   217 Wed 25 Dec 18:29:53",
+                 "HHHHHHHHHHeeeeeeeeemhheDAYe39eMONp29e59e59", 
+                 name="Anglia Packet 0", row=0)       
+
+PleaseReferToPage100 =  Finder("          PLEASE REFER TO PAGE 100 1829:53",
+                               "HHHHHHHHHHeeeeeeeeeeeeeeeeeeeeeeeee2959e59", 
+                                name="PleaseReferToPage100 Packet 0", row=0)  
+                                
+PleaseReferToPage400 =  Finder("          PLEASE REFER TO PAGE 400 1829:53",
+                               "HHHHHHHHHHeeeeeeeeeeeeeeeeeeeeeeeee2959e59", 
+                                name="PleaseReferToPage400", row=0) 
+
+PleaseSelectPage100 =  Finder("           PLEASE SELECT PAGE 100  1829:53",
+                              "HHHHHHHHHHeeeeeeeeeeeeeeeeeeeeeeeee2959e59", 
+                                name="PleaseSelectPage100", row=0)                                 
+                                
+TurnToPage100 =  Finder("             TURN TO PAGE 700      1335:43",
+                              "HHHHHHHHHHpppeeeeeeeeeeeeeeeepppppp2959e59", 
+                                name="TurnToPage100", row=0)   
+
+PageSelectedIsOnC4 =  Finder("           PAGE SELECTED IS ON C4  1903:46",
+                             "HHHHHHHHHHpeeeeeeeeeeeeeeeeeeeeeepp2959e59", 
+                                name="PageSelectedIsOnC4", row=0)                                   
+                                
+AirCallTeletext = Finder("             AIR CALL TELETEXT     1337:17",
+                         "HHHHHHHHHHpppeeeeeeeeeeeeeeeeeppppp2959e59", 
+                  name="Air Call Teletext", row=0)
+
+OracleCH4 = Finder("          ORACLE 297 Sun26 May\x03CH4 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONe"+"eeee2959e59", 
+                  name="ORACLE CH4 Packet 0", row=0)         
+
+OracleTVS = Finder("          ORACLE 297 Sun26 May TVS 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONpeeep2959e59", 
+                  name="ORACLE TVS Packet 0", row=0)  
+                  
+OracleANG = Finder("          ORACLE 297 Sun26 May ANG 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONpeeep2959e59", 
+                  name="ORACLE Anglia", row=0) 
+                  
+OracleHTV = Finder("          ORACLE 297 Sun26 May HTV 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONpeeep2959e59", 
+                  name="ORACLE HTV", row=0)                   
+                  
+AirCallTeletext = Finder("             AIR CALL TELETEXT     1337:17",
+                         "HHHHHHHHHHpppeeeeeeeeeeeeeeeeeppppp2959e59", 
+                  name="Air Call Teletext", row=0) 
+
+OracleOffAir = Finder("          ORACLE P000  DATE\x14\x1d\x03ITV \x07\x1cTIME  ",
+                      "HHHHHHHHHHeeeeeeeeeeeeeeeee"+"ee"+"e"+"eeee"+"ee"+"eeeeee", 
+                  name="ORACLE off air", row=0) 
+
+DBIInternational = Finder("          \x01   DBI/CH4 M BCAST2  \x09\x07 2102:40",
+                          "HHHHHHHHHHe"+"ppeeeeepppeppppppppppe"+"e"+"e2959e59", 
+                  name="DBI International", row=0)                   
+
+Westcountry = Finder("          \x04\x1D\x07westcountry 659 Mon 5\x1c0003.49",
+                     "HHHHHHHHHHe"+"e"+"e"+"eeeeeeeeeeeemhheDAYp9e"+"2959e59", 
+                  name="Westcountry", row=0)   
+
+MTVText = Finder("          104\x03MTVText  \x03Sun 9 Apr\x0317:32:48",
+                 "HHHHHHHHHHmhhe"+"eeeeeeeeee"+"DAYp9eMONe"+"29e59e59", 
+                  name="MTVText", row=0)   
+
+ORACLEDateTime = Finder("                     Sat29 Sep     1903:10",
+                        "HHHHHHHHHHeeeeeeeeeeeDAYp9eMONeeeee2959e59", 
+                  name="ORACLE Date and Time", row=0)
+
+Supertext = Finder("          Supertext100 Sun  6 Aug 14:07/57",
+                   "HHHHHHHHHHeeeeeeeeepppeDAYep9eMONp29e59e59", 
+                  name="Supertext", row=0)
+
+Central = Finder("          Central  6FF Wed  6 Nov 20:03:21",
+                 "HHHHHHHHHHeeeeeeeeemhheDAYep9eMONe29e59e59", 
+                name="Central", row=0)  
+                
+ITVSubtitles = Finder("              ITV SUBTITLES               ",
+                      "HHHHHHHHHHeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", 
+                name="ITV Subtitles", row=0)   
+                
+OracleSTV1982 = Finder("          ORACLE 297 Sun26 May STV 1829:53",
+                       "HHHHHHHHHHeeeeeeemhheDAYp9eMONpeeep2959e59", 
+                  name="ORACLE STV 1982", row=0) 
+
+Granada = Finder("          Granada 625 Mon  9 Oct  20:03:21",
+                 "HHHHHHHHHHeeeeeeeemhheDAYep9eMONee29e59e59", 
+                name="Granada", row=0)      
+
+ITVPlusGRA = Finder("          ITV+   633 Wed 3 Nov\x03GRA 0038:55",
+                    "HHHHHHHHHHeeeepppmhheDAYp9eMON"+"eeeee2959e59", 
+                name="ITV+ GRA", row=0) 
+
+OracleS4C = Finder("          ORACLE 297 Sun26 May\x03S4C 1829:53",
+                  "HHHHHHHHHHeeeeeeemhheDAYp9eMONe"+"eeee2959e59", 
+                  name="ORACLE S4C", row=0)
+                  
+Sbectel2000s = Finder("          SBECTEL 400     26 Meh  20:07:35",
+                      "HHHHHHHHHHeeeeeeeemhheeeee39epppee29e59e59", 
+                 name="Sbectel 2000s", row=0)  
+
+Sbectel2005 = Finder("          SBECTEL  497    Ion 12  19:06:13",
+                     "HHHHHHHHHHeeeeeeeeemhheeeepppe39ee29e59e59", 
+name="Sbectel 2005", row=0) 
+             
+Sbectel1990s = Finder("          \x02SBECTEL\x07\x07317\x07Mon\x0725\x07Dec 1843:56",
+                    "HHHHHHHHHHe"+"eeeeeeee"+"e"+"mhhe"+"DAYe"+"p9e"+"MONe2959e59", 
+                 name="Sbectel 1990s", row=0) 
+
+Sbectel1990sb = Finder("          SBECTEL  317 Mon\x0725 Dec\x0318:43.56",
+                       "HHHHHHHHHHeeeeeeeeemhheDAYe"+"p9eMONe"+"29e59e59", 
+                 name="Sbectel 1990s", row=0)                 
+
+STVAncillary = Finder("          \x04\x1d\x07SCOTTEXT  \x1c600  3Sep\x0323:59:56",
+                      "HHHHHHHHHHe"+"e"+"e"+"eeeeeeeeeee"+"mhhep9MONe"+"29e59e59", 
+                     name="STVAncillary", row=0)
+
+ITVPlusHTV = Finder("          ITV+   633 Wed 3 Nov\x03HTV 0038:55",
+                    "HHHHHHHHHHeeeepppmhheDAYp9eMON"+"eeeee2959e59", 
+                    name="ITV+ HTV", row=0) 
+
+itv1Wales = Finder("          itv1Wales 699 Tue Feb21 18:01:51",
+                   "HHHHHHHHHHeeeeeeeeeemhheDAYeMONe9e29e59e59", 
+                    name="itv1 Wales", row=0) 
+                    
+                    
+CeefaxSelect200 = Finder("          \x0dPLEASE SELECT PAGE 200 13:40/18",
+                         "HHHHHHHHHHe"+"eeeeeeeeeeeeeeeeeeeeeee29e59e59", 
+                    name="Ceefax Select Page 200", row=0)                     
+   
+OracleGPN = Finder("          ORACLE 297 Sun26 May GPN 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONpeeep2959e59", 
+                  name="ORACLE Grampian", row=0) 
+
+Channel = Finder("          \x04\x1d\x07Channel  \x1c100 Apr 12\x0318:29:53",
+                 "HHHHHHHHHHe"+"e"+"e"+"eeeeeeeeee"+"mhheMONe29e"+"29e59e59", 
+                     name="Channel Ancillary", row=0)                  
+
+OracleBDR = Finder("          ORACLE 297 Sun26 May BDR 1829:53",
+                   "HHHHHHHHHHeeeeeeemhheDAYp9eMONpeeep2959e59", 
+                  name="ORACLE Border", row=0)  
+                     
+all_headers = [Generic]
+#all_headers = [BBC, CeefaxSelect200] # 20/12/1979 - 11/08/1990
+#all_headers = [BBCnew] # 8/3/1997 - 26/8/2006
+
+#all_headers = [OraclePre1976]
+#all_headers = [OracleWhiteIDGreenClock] # 25/07/1979 - 01/04/1981
+#all_headers = [OracleWhite] # 19/01/1981 - 01/04/1981
+#all_headers = [OracleITN, OracleGreenClock, PleaseReferToPage100] # 25/12/1981 - 21/07/1982
+#all_headers = [OracleITN, OracleGreenClock, OracleSTV1982, PleaseReferToPage100] # 17/10/1982 - 04/02/1983
+#all_headers = [OracleITN, Oracle, PleaseReferToPage100, OracleOffAir] # 02/01/1983 - 24/09/1983
+#all_headers = [Oracle, PleaseSelectPage100] #22/11/1983 - 07/02/1984
+#all_headers = [Oracle, OracleBDR, PageSelectedIsOnC4, PleaseSelectPage100] #11/03/1984 - 27/12/1984
+#all_headers = [Oracle, OracleANG, AirCallTeletext, TurnToPage100, PageSelectedIsOnC4, Televox, PleaseSelectPage100] # 02/04/1985 - 31/12/1992
+
+#all_headers = [TeletextLtd, Granada, DBIInternational, TeletextOn3, ITVPlus] # 03/11/1993
+#all_headers = [TeletextLtd, ITVPlusHTV, DBIInternational] # 26/09/1994 - 06/11/1996
+#all_headers = [TeletextLtd, Channel] # 21/02/2002
+
+#all_headers = [OracleCH4, OracleITN, PleaseReferToPage400] # 10/04/1983
+#all_headers = [OracleC4] # 07/12/1983 - 31/12/1992
+
+#all_headers = [OracleS4C] # 07/08/1988
+#all_headers = [TeletextLtd, Sbectel2000s] # 25/01/2005 - 21/05/2006
+#all_headers = [TeletextLtd, Sbectel2005] # 12/01/2005
+#all_headers = [TeletextLtd, Sbectel1990s] # 25/12/1995 - 11/05/1996
+#all_headers = [TeletextLtd, Sbectel1990sb] # 08/11/1998 - 21/01/2000
+#all_headers = [TeletextLtd, FourTel, DBIInternational] # 19/6/1995 - 20/11/1998
+
+#all_headers = [Supertext] 
+#all_headers = [TeletextOn3] # 1/6/1998 - 5/9/1998
+#all_headers = [FiveText, TeletextLtd]
+#all_headers = [SkyText]
 
 # there are two types of broadcast packet. one has 8/4 PDC data and the other
 # has no encoding (not even parity). the latter is almost impossible to 
