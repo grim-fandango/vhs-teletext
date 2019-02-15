@@ -47,6 +47,11 @@ To use:
 	Any packets that are > X/24 will be written to g:\datapackets.txt.  These packets are copied as-is in this version 
 	and are not subject to odd-parity checks etc. as they were in the original branch.
 	
+	You can run this on a folder or on a single file.  In single file mode it will process a large monolithic VBI file
+	into a single T42 file.  It's single-threaded though, so it will take longer to process.  It will remember how far 
+	you are through a VBI file if you need to CTRL-C it and resume later.  Useful for smallish files you aren't in a 
+	rush for.
+	
 7.	When finished (or during processing if you like) you can run:
 
 		pagesplit.py g:
@@ -69,6 +74,10 @@ To use:
 	It also dumps the raw teletext data into 
 	g:\binaries - this folder can be dragged into the main window of the Teletext Recovery Editor here: 
 	https://teletextarchaeologist.org/teletextrecoveryeditor where you can look at the files and correct recovery errors.
+	
+	It also creates two index files - one listing all of the recovered frames as HTML, and one which stores all the pages in 
+	base64 format.  This version gives you an emulator in a web browser for viewing the pages on.  You might need the find
+	and replace the URL on each page to point to Simon Rawles' edit.tf editor.
 	
 9.	Run copy /b g:\vbi [folder_on_your_hard_disk]\filename.t42 to concatenate all of the 42 byte packets into one,
 	monolithic t42 file.  Again, the one big file reduces wear-and-tear on your hard disk and you can drop it into the
